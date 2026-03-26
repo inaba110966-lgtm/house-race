@@ -30,6 +30,41 @@
       color: var(--dark);
       line-height: 1.8;
       overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CUSTOM CURSOR ───────────────────── */
+    .cursor-dot {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: var(--black);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, background 0.3s, width 0.3s, height 0.3s;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(10,10,10,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease, border-color 0.3s, background 0.3s;
+    }
+    .cursor-dot.hover  { width: 10px; height: 10px; background: var(--accent); }
+    .cursor-ring.hover { width: 60px; height: 60px; border-color: var(--accent); background: rgba(200,169,126,0.06); }
+    .cursor-dot.dark   { background: var(--white); }
+    .cursor-ring.dark  { border-color: rgba(255,255,255,0.4); }
+
+    /* show default cursor on mobile */
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
     }
 
     /* ─── NAV ─────────────────────────────── */
@@ -100,15 +135,13 @@
     }
     .hero-bg {
       position: absolute;
-      inset: 0;
+      inset: -15%;
       background-image: url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=80');
       background-size: cover;
       background-position: center;
       filter: grayscale(100%) brightness(0.45);
-      transform: scale(1.05);
-      transition: transform 8s ease;
+      will-change: transform;
     }
-    .hero-bg.loaded { transform: scale(1); }
     .hero-overlay {
       position: absolute;
       inset: 0;
@@ -137,8 +170,17 @@
       letter-spacing: 0.15em;
       line-height: 1.1;
       margin-bottom: 0.3rem;
+    }
+    /* split-text chars */
+    .char {
+      display: inline-block;
       opacity: 0;
-      animation: fadeUp 0.8s 0.5s forwards;
+      transform: translateY(60px) rotate(4deg);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .char.visible {
+      opacity: 1;
+      transform: none;
     }
     .hero-subtitle {
       font-family: var(--font-en);
@@ -532,6 +574,52 @@
       color: rgba(255,255,255,0.25);
     }
 
+    /* ─── PARALLAX IMAGES ────────────────── */
+    .parallax-wrap {
+      overflow: hidden;
+      position: relative;
+    }
+    .parallax-img {
+      will-change: transform;
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.5s;
+      position: absolute;
+      top: -10%;
+      left: 0;
+    }
+    .parallax-wrap:hover .parallax-img { filter: grayscale(20%); }
+
+    /* ─── MARQUEE ─────────────────────────── */
+    .marquee-wrap {
+      background: var(--black);
+      overflow: hidden;
+      padding: 1.2rem 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 18s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-track span {
+      font-family: var(--font-en);
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 0 3rem;
+    }
+    .marquee-track span.accent { color: var(--accent); }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
     /* ─── ANIMATIONS ──────────────────────── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -585,6 +673,10 @@
 </head>
 <body>
 
+  <!-- CUSTOM CURSOR -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
   <!-- NAV -->
   <nav id="navbar">
     <a href="#" class="nav-logo">Machua</a>
@@ -616,6 +708,24 @@
       <span>Scroll</span>
     </div>
   </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Hair Design</span><span class="accent">—</span>
+      <span>Color</span><span class="accent">—</span>
+      <span>Treatment</span><span class="accent">—</span>
+      <span>Perm</span><span class="accent">—</span>
+      <span>Styling</span><span class="accent">—</span>
+      <span>Fujisawa</span><span class="accent">—</span>
+      <span>Hair Design</span><span class="accent">—</span>
+      <span>Color</span><span class="accent">—</span>
+      <span>Treatment</span><span class="accent">—</span>
+      <span>Perm</span><span class="accent">—</span>
+      <span>Styling</span><span class="accent">—</span>
+      <span>Fujisawa</span><span class="accent">—</span>
+    </div>
+  </div>
 
   <!-- CONCEPT -->
   <section class="concept" id="concept">
@@ -663,20 +773,20 @@
         <h2 class="section-title reveal">Gallery</h2>
       </div>
       <div class="gallery-grid reveal">
-        <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80" alt="ヘアサロン施術" loading="lazy" />
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80" alt="ヘアサロン施術" loading="lazy" />
         </div>
-        <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&q=80" alt="ヘアカラー" loading="lazy" />
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&q=80" alt="ヘアカラー" loading="lazy" />
         </div>
-        <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80" alt="ヘアスタイリング" loading="lazy" />
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80" alt="ヘアスタイリング" loading="lazy" />
         </div>
-        <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80" alt="サロン空間" loading="lazy" />
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80" alt="サロン空間" loading="lazy" />
         </div>
-        <div class="gallery-item">
-          <img src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?w=600&q=80" alt="トリートメント" loading="lazy" />
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?w=600&q=80" alt="トリートメント" loading="lazy" />
         </div>
       </div>
     </div>
@@ -840,50 +950,145 @@
   </footer>
 
   <script>
-    // Nav scroll effect
+    /* ═══════════════════════════════════════
+       1. CUSTOM CURSOR
+    ═══════════════════════════════════════ */
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let ringX = 0, ringY = 0, mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.left = mouseX + 'px';
+      dot.style.top  = mouseY + 'px';
+    });
+
+    // Ring lags behind dot
+    (function animateRing() {
+      ringX += (mouseX - ringX) * 0.12;
+      ringY += (mouseY - ringY) * 0.12;
+      ring.style.left = ringX + 'px';
+      ring.style.top  = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    // Hover effect on interactive elements
+    document.querySelectorAll('a, button, .gallery-item, .feature-item').forEach(el => {
+      el.addEventListener('mouseenter', () => { dot.classList.add('hover'); ring.classList.add('hover'); });
+      el.addEventListener('mouseleave', () => { dot.classList.remove('hover'); ring.classList.remove('hover'); });
+    });
+
+    // Dark cursor on dark sections
+    const darkSections = document.querySelectorAll('.features, .menu, .cta, footer, .marquee-wrap');
+    const cursorObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          dot.classList.add('dark'); ring.classList.add('dark');
+        } else {
+          // check if any dark section is still visible
+          const anyDark = [...darkSections].some(s => {
+            const r = s.getBoundingClientRect();
+            return r.top < window.innerHeight / 2 && r.bottom > window.innerHeight / 2;
+          });
+          if (!anyDark) { dot.classList.remove('dark'); ring.classList.remove('dark'); }
+        }
+      });
+    }, { threshold: 0.3 });
+    darkSections.forEach(s => cursorObserver.observe(s));
+
+    /* ═══════════════════════════════════════
+       2. NAV SCROLL
+    ═══════════════════════════════════════ */
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
-    });
+    }, { passive: true });
 
-    // Hero bg animation trigger
+    /* ═══════════════════════════════════════
+       3. SPLIT TEXT — Hero title
+    ═══════════════════════════════════════ */
+    function splitText(el) {
+      const lines = el.innerHTML.split('<br>');
+      el.innerHTML = lines.map(line =>
+        [...line].map(ch =>
+          ch === ' ' ? '<span class="char" style="width:0.3em"> </span>'
+                     : `<span class="char">${ch}</span>`
+        ).join('')
+      ).join('<br>');
+    }
+
+    const heroTitle = document.querySelector('.hero-title');
+    splitText(heroTitle);
+
+    // Trigger chars after a short delay
+    setTimeout(() => {
+      document.querySelectorAll('.hero-title .char').forEach((c, i) => {
+        setTimeout(() => c.classList.add('visible'), i * 40 + 200);
+      });
+    }, 300);
+
+    /* ═══════════════════════════════════════
+       4. PARALLAX
+    ═══════════════════════════════════════ */
     const heroBg = document.getElementById('heroBg');
-    window.addEventListener('load', () => {
-      heroBg.classList.add('loaded');
+    const parallaxImgs = document.querySelectorAll('.parallax-img');
+
+    function onScroll() {
+      const sy = window.scrollY;
+
+      // Hero bg parallax
+      heroBg.style.transform = `translateY(${sy * 0.35}px)`;
+
+      // Gallery images parallax
+      parallaxImgs.forEach(img => {
+        const wrap = img.parentElement;
+        const rect = wrap.getBoundingClientRect();
+        const center = rect.top + rect.height / 2 - window.innerHeight / 2;
+        img.style.transform = `translateY(${center * 0.12}px)`;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ═══════════════════════════════════════
+       5. SCROLL REVEAL (staggered)
+    ═══════════════════════════════════════ */
+    document.querySelectorAll('.features-grid, .menu-categories').forEach(container => {
+      [...container.querySelectorAll('.reveal')].forEach((el, i) => {
+        el.style.transitionDelay = (i * 0.12) + 's';
+      });
     });
 
-    // Scroll reveal
-    const revealEls = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add('visible');
-          }, 80 * (entry.target.dataset.delay || 0));
-          observer.unobserve(entry.target);
+          entry.target.classList.add('visible');
+          revealObs.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
 
-    // Stagger siblings
-    document.querySelectorAll('.features-grid, .menu-categories, .gallery-grid').forEach(container => {
-      [...container.querySelectorAll('.reveal')].forEach((el, i) => {
-        el.dataset.delay = i;
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ═══════════════════════════════════════
+       6. SMOOTH SCROLL for nav links
+    ═══════════════════════════════════════ */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
       });
     });
 
-    revealEls.forEach(el => {
-      observer.observe(el);
-      // Adjust stagger via delay data attribute
-      if (el.dataset.delay) {
-        const orig = el.style.transition;
-        el.style.transitionDelay = (el.dataset.delay * 0.1) + 's';
-      }
-    });
-
-    // Hamburger (mobile)
+    /* ═══════════════════════════════════════
+       7. HAMBURGER (mobile)
+    ═══════════════════════════════════════ */
     const hamburger = document.getElementById('hamburger');
-    const navLinks = document.querySelector('.nav-links');
+    const navLinks  = document.querySelector('.nav-links');
     hamburger.addEventListener('click', () => {
       const isOpen = navLinks.style.display === 'flex';
       navLinks.style.cssText = isOpen
