@@ -474,19 +474,55 @@
       position: relative;
       overflow: hidden;
       border: 1px solid var(--pale);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     }
     .access-map iframe {
       width: 100%;
-      height: 400px;
+      height: 420px;
       display: block;
-      filter: grayscale(100%) contrast(0.9);
+      filter: grayscale(25%) contrast(1.05);
     }
-    .access-map-overlay {
+    .access-map-badge {
       position: absolute;
-      inset: 0;
+      top: 16px;
+      left: 16px;
+      background: var(--black);
+      color: var(--white);
+      padding: 0.55rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
       pointer-events: none;
-      background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, transparent 50%);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
+    .access-map-badge .badge-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--white);
+    }
+    .access-map-badge .badge-addr {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.05em;
+    }
+    .access-map-open {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.2s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .access-map-open:hover { background: #333; }
 
     /* ─── CTA ─────────────────────────────── */
     .cta {
@@ -926,13 +962,22 @@
       </div>
       <div class="access-map reveal">
         <iframe
-          src="https://maps.google.com/maps?q=神奈川県藤沢市鵠沼石上1-4-10&output=embed&hl=ja&z=16"
+          src="https://maps.google.com/maps?q=35.335886,139.487997&output=embed&hl=ja&z=18&markers=color:red%7C35.335886,139.487997"
           allowfullscreen
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
           title="MACHUA DESIGNERS SALON 地図"
         ></iframe>
-        <div class="access-map-overlay"></div>
+        <div class="access-map-badge">
+          <span class="badge-name">MACHUA DESIGNERS SALON</span>
+          <span class="badge-addr">鵠沼石上1-4-10 MIビルB1F</span>
+        </div>
+        <a
+          class="access-map-open"
+          href="https://maps.google.com/maps?q=35.335886,139.487997"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Google Maps で開く ↗</a>
       </div>
     </div>
   </section>
