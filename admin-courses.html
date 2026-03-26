@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>コースマスタ | MACHUA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--black:#0a0a0a;--dark:#1a1a1a;--mid:#555;--light:#aaa;--pale:#e8e8e8;--white:#f5f5f5;--accent:#c8a97e;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Noto Serif JP',serif;background:#f0f0f0;color:var(--dark);}
+    a{text-decoration:none;color:inherit;}
+    .admin-wrap{display:flex;min-height:100vh;}
+    .sidebar{width:200px;background:var(--black);flex-shrink:0;display:flex;flex-direction:column;}
+    .sb-logo{padding:1.4rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:0.9rem;letter-spacing:0.3em;color:var(--white);border-bottom:1px solid rgba(255,255,255,0.07);}
+    .sb-logo small{display:block;font-size:0.55rem;letter-spacing:0.2em;color:rgba(255,255,255,0.3);margin-top:0.2rem;text-transform:uppercase;}
+    .sb-nav{flex:1;padding:0.8rem 0;}
+    .sb-link{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.5rem;font-size:0.76rem;letter-spacing:0.08em;color:rgba(255,255,255,0.5);transition:all 0.2s;}
+    .sb-link:hover{color:var(--white);background:rgba(255,255,255,0.05);}
+    .sb-link.active{color:var(--white);background:rgba(255,255,255,0.08);border-left:2px solid var(--accent);}
+    .sb-link .icon{font-size:0.9rem;}
+    .sb-bottom{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,0.07);}
+    .sb-logout{background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);font-size:0.7rem;letter-spacing:0.1em;padding:0.4rem 0.8rem;cursor:pointer;width:100%;transition:all 0.2s;}
+    .sb-logout:hover{color:var(--white);border-color:rgba(255,255,255,0.4);}
+    .main{flex:1;overflow:auto;}
+    .main-header{background:var(--white);border-bottom:1px solid var(--pale);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;}
+    .main-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;letter-spacing:0.12em;}
+    .main-body{padding:1.5rem 2rem 4rem;max-width:860px;}
+
+    /* Buttons */
+    .btn{padding:0.5rem 1.2rem;border:none;cursor:pointer;font-size:0.76rem;letter-spacing:0.08em;transition:all 0.2s;}
+    .btn-primary{background:var(--dark);color:var(--white);}
+    .btn-primary:hover{background:#333;}
+    .btn-danger{background:none;border:1px solid #c0392b;color:#c0392b;font-size:0.7rem;padding:0.3rem 0.7rem;}
+    .btn-danger:hover{background:#c0392b;color:var(--white);}
+    .btn-edit{background:none;border:1px solid var(--pale);color:var(--mid);font-size:0.7rem;padding:0.3rem 0.7rem;}
+    .btn-edit:hover{border-color:var(--mid);}
+    .btn-sm{padding:0.3rem 0.7rem;font-size:0.7rem;}
+    .btn-accent{background:var(--accent);color:var(--white);border:none;}
+    .btn-cancel{background:none;border:1px solid var(--pale);color:var(--mid);}
+
+    /* Course card */
+    .course-card{background:var(--white);margin-bottom:1rem;border:1px solid var(--pale);}
+    .course-head{display:flex;align-items:center;padding:1rem 1.2rem;gap:1rem;border-bottom:1px solid var(--pale);}
+    .course-name-big{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;letter-spacing:0.08em;flex:1;}
+    .course-price-big{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--mid);}
+    .course-min-big{font-size:0.72rem;color:var(--light);margin-left:0.5rem;}
+    .course-actions{display:flex;gap:0.5rem;flex-shrink:0;}
+    .opt-table-wrap{padding:0.8rem 1.2rem 1rem;}
+    .opt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;}
+    .opt-label{font-family:'Cormorant Garamond',serif;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--light);}
+    .opt-table{width:100%;font-size:0.78rem;border-collapse:collapse;}
+    .opt-table th{font-family:'Cormorant Garamond',serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--light);text-align:left;padding:0.4rem 0.5rem;border-bottom:1px solid var(--pale);}
+    .opt-table td{padding:0.5rem 0.5rem;border-bottom:1px solid var(--pale);}
+    .opt-table tr:last-child td{border-bottom:none;}
+    .opt-empty{color:var(--light);font-size:0.74rem;padding:0.6rem 0;}
+
+    /* Forms */
+    .form-card{background:var(--white);border:1px solid var(--accent);padding:1.5rem;margin-bottom:1.5rem;}
+    .form-card-title{font-family:'Cormorant Garamond',serif;font-size:0.9rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1.2rem;}
+    .form-row{display:grid;grid-template-columns:1fr 120px 100px;gap:0.8rem;margin-bottom:0.8rem;align-items:end;}
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr 100px;gap:0.8rem;margin-bottom:0.8rem;align-items:end;}
+    .form-group label{display:block;font-family:'Cormorant Garamond',serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--light);margin-bottom:0.35rem;}
+    .form-group input{width:100%;padding:0.55rem 0.7rem;border:1px solid var(--pale);background:var(--white);font-family:'Noto Serif JP',serif;font-size:0.82rem;color:var(--dark);outline:none;}
+    .form-group input:focus{border-color:var(--accent);}
+    .form-actions{display:flex;gap:0.6rem;margin-top:0.5rem;}
+
+    /* Inline edit */
+    .editing .course-head{background:rgba(200,169,126,0.05);}
+
+    /* Reset btn */
+    .reset-area{background:var(--white);border:1px solid var(--pale);padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;margin-top:1.5rem;}
+    .reset-desc{font-size:0.76rem;color:var(--mid);}
+
+    /* Password gate */
+    .pw-bg{position:fixed;inset:0;background:rgba(10,10,10,0.92);z-index:400;display:flex;align-items:center;justify-content:center;}
+    .pw-box{background:var(--white);max-width:380px;width:100%;padding:2.5rem;}
+    .pw-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;letter-spacing:0.1em;text-align:center;margin-bottom:0.4rem;}
+    .pw-sub{font-size:0.74rem;color:var(--light);text-align:center;margin-bottom:1.8rem;}
+    .pw-input{width:100%;padding:0.75rem 1rem;border:1px solid var(--pale);font-size:0.9rem;outline:none;margin-bottom:0.8rem;}
+    .pw-input:focus{border-color:var(--accent);}
+    .pw-btn{width:100%;padding:0.8rem;background:var(--black);color:var(--white);border:none;font-size:0.8rem;letter-spacing:0.2em;cursor:pointer;}
+    .pw-err{color:#c0392b;font-size:0.74rem;text-align:center;margin-bottom:0.6rem;display:none;}
+    .hidden{display:none!important;}
+
+    @media(max-width:700px){
+      .sidebar{width:56px;}
+      .sb-logo,.sb-link span,.sb-bottom,.sb-logo small{display:none;}
+      .sb-link{justify-content:center;padding:0.8rem;}
+      .form-row,.form-row-2{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Password gate -->
+<div class="pw-bg" id="pwGate">
+  <div class="pw-box">
+    <div class="pw-title">MACHUA 管理画面</div>
+    <div class="pw-sub">パスワードを入力してください</div>
+    <p class="pw-err" id="pwErr">パスワードが違います</p>
+    <input type="password" class="pw-input" id="pwInput" placeholder="Password" autocomplete="current-password"/>
+    <button class="pw-btn" id="pwBtn">ログイン</button>
+  </div>
+</div>
+
+<div class="admin-wrap hidden" id="adminApp">
+  <aside class="sidebar">
+    <div class="sb-logo">MACHUA<small>Admin</small></div>
+    <nav class="sb-nav">
+      <a href="admin.html"          class="sb-link"><span class="icon">📅</span><span>予約カレンダー</span></a>
+      <a href="admin-courses.html"  class="sb-link active"><span class="icon">✂️</span><span>コースマスタ</span></a>
+      <a href="admin-schedule.html" class="sb-link"><span class="icon">⚙️</span><span>稼働マスタ</span></a>
+    </nav>
+    <div class="sb-bottom">
+      <button class="sb-logout" onclick="MACHUA.auth.logout()">ログアウト</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="main-header">
+      <span class="main-title">コースマスタ</span>
+      <button class="btn btn-primary" onclick="toggleAddCourse()">＋ コースを追加</button>
+    </div>
+    <div class="main-body">
+
+      <!-- Add course form -->
+      <div class="form-card hidden" id="addCourseForm">
+        <div class="form-card-title">新規コース追加</div>
+        <div class="form-row">
+          <div class="form-group"><label>コース名</label><input type="text" id="nc-name" placeholder="例: トリートメント"/></div>
+          <div class="form-group"><label>料金 (¥)</label><input type="number" id="nc-price" placeholder="5000" min="0"/></div>
+          <div class="form-group"><label>時間 (分)</label><input type="number" id="nc-min" placeholder="45" min="15" step="15"/></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="addCourse()">追加する</button>
+          <button class="btn btn-cancel" onclick="toggleAddCourse()">キャンセル</button>
+        </div>
+      </div>
+
+      <!-- Course list -->
+      <div id="courseList"></div>
+
+      <!-- Reset -->
+      <div class="reset-area">
+        <span class="reset-desc">デフォルトのコース設定に戻す（既存データは削除されます）</span>
+        <button class="btn btn-danger" onclick="if(confirm('リセットしますか？')){ MACHUA.courses.reset(); renderCourses(); }">リセット</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="booking-data.js"></script>
+<script>
+  /* ── Auth ─────────────────────────────────────────── */
+  function checkAuth(){
+    if(MACHUA.auth.check()){ document.getElementById('pwGate').classList.add('hidden'); document.getElementById('adminApp').classList.remove('hidden'); renderCourses(); }
+  }
+  document.getElementById('pwBtn').onclick=()=>{
+    if(MACHUA.auth.login(document.getElementById('pwInput').value)) checkAuth();
+    else document.getElementById('pwErr').style.display='block';
+  };
+  document.getElementById('pwInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('pwBtn').click(); });
+  checkAuth();
+
+  /* ── Helpers ─────────────────────────────────────── */
+  function minsStr(m){ const h=~~(m/60),r=m%60; return h?`${h}時間${r?r+'分':''}`:r+'分'; }
+
+  /* ── Add course ─────────────────────────────────── */
+  function toggleAddCourse(){
+    const f=document.getElementById('addCourseForm');
+    f.classList.toggle('hidden');
+  }
+  function addCourse(){
+    const name=document.getElementById('nc-name').value.trim();
+    const price=Number(document.getElementById('nc-price').value);
+    const mins=Number(document.getElementById('nc-min').value);
+    if(!name||!price||!mins){ alert('すべての項目を入力してください'); return; }
+    const cs=MACHUA.courses.get();
+    const id='c'+Date.now().toString(36);
+    cs.push({ id, name, price, minutes:mins, options:[] });
+    MACHUA.courses.set(cs);
+    document.getElementById('addCourseForm').classList.add('hidden');
+    document.getElementById('nc-name').value='';
+    document.getElementById('nc-price').value='';
+    document.getElementById('nc-min').value='';
+    renderCourses();
+  }
+
+  /* ── Edit course ─────────────────────────────────── */
+  function editCourse(id){
+    const cs=MACHUA.courses.get(), c=cs.find(c=>c.id===id);
+    if(!c) return;
+    const name=prompt('コース名',c.name); if(name===null) return;
+    const price=prompt('料金（円）',c.price); if(price===null) return;
+    const mins=prompt('時間（分）',c.minutes); if(mins===null) return;
+    c.name=name.trim()||c.name; c.price=Number(price)||c.price; c.minutes=Number(mins)||c.minutes;
+    MACHUA.courses.set(cs); renderCourses();
+  }
+
+  /* ── Delete course ───────────────────────────────── */
+  function deleteCourse(id){
+    if(!confirm('このコースを削除しますか？')) return;
+    MACHUA.courses.set(MACHUA.courses.get().filter(c=>c.id!==id)); renderCourses();
+  }
+
+  /* ── Add option ─────────────────────────────────── */
+  function addOption(courseId){
+    const cs=MACHUA.courses.get(), c=cs.find(c=>c.id===courseId); if(!c) return;
+    const name=document.getElementById(`on-name-${courseId}`).value.trim();
+    const price=Number(document.getElementById(`on-price-${courseId}`).value);
+    const mins=Number(document.getElementById(`on-min-${courseId}`).value);
+    if(!name||!price||!mins){ alert('すべての項目を入力してください'); return; }
+    if(!c.options) c.options=[];
+    c.options.push({ id:'o'+Date.now().toString(36), name, price, minutes:mins });
+    MACHUA.courses.set(cs); renderCourses();
+  }
+
+  /* ── Delete option ───────────────────────────────── */
+  function deleteOption(courseId, optId){
+    if(!confirm('このオプションを削除しますか？')) return;
+    const cs=MACHUA.courses.get(), c=cs.find(c=>c.id===courseId); if(!c) return;
+    c.options=c.options.filter(o=>o.id!==optId);
+    MACHUA.courses.set(cs); renderCourses();
+  }
+
+  /* ── Render ──────────────────────────────────────── */
+  function renderCourses(){
+    const cs=MACHUA.courses.get();
+    const cl=document.getElementById('courseList');
+    if(!cs.length){ cl.innerHTML='<p style="color:var(--light);font-size:0.8rem;padding:1rem 0;">コースが登録されていません</p>'; return; }
+    cl.innerHTML=cs.map(c=>`
+      <div class="course-card">
+        <div class="course-head">
+          <span class="course-name-big">${c.name}</span>
+          <span class="course-price-big">¥${Number(c.price).toLocaleString()}<span class="course-min-big">${minsStr(c.minutes)}</span></span>
+          <div class="course-actions">
+            <button class="btn btn-edit" onclick="editCourse('${c.id}')">編集</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCourse('${c.id}')">削除</button>
+          </div>
+        </div>
+        <div class="opt-table-wrap">
+          <div class="opt-header">
+            <span class="opt-label">オプション</span>
+          </div>
+          ${c.options&&c.options.length
+            ? `<table class="opt-table">
+                <thead><tr><th>名前</th><th>料金</th><th>時間</th><th></th></tr></thead>
+                <tbody>${c.options.map(o=>`
+                  <tr>
+                    <td>${o.name}</td>
+                    <td>+¥${Number(o.price).toLocaleString()}</td>
+                    <td>${minsStr(o.minutes)}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteOption('${c.id}','${o.id}')">削除</button></td>
+                  </tr>`).join('')}
+                </tbody></table>`
+            : `<p class="opt-empty">オプションなし</p>`
+          }
+          <div style="margin-top:0.8rem;background:#f8f8f8;padding:0.8rem;border:1px dashed var(--pale);">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:0.62rem;letter-spacing:0.25em;color:var(--light);text-transform:uppercase;margin-bottom:0.6rem;">オプション追加</div>
+            <div class="form-row-2">
+              <div class="form-group"><label>名前</label><input type="text" id="on-name-${c.id}" placeholder="例: パーマ" style="background:var(--white)"/></div>
+              <div class="form-group"><label>料金 (¥)</label><input type="number" id="on-price-${c.id}" placeholder="3000" min="0" style="background:var(--white)"/></div>
+              <div class="form-group"><label>時間 (分)</label><input type="number" id="on-min-${c.id}" placeholder="60" min="15" step="15" style="background:var(--white)"/></div>
+            </div>
+            <button class="btn btn-accent btn-sm" onclick="addOption('${c.id}')">追加</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+</script>
+</body>
+</html>
