@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MACHUA DESIGNERS SALON | 藤沢の美容室</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0a0a0a;
+      --dark:    #1a1a1a;
+      --mid:     #444;
+      --light:   #aaa;
+      --pale:    #e8e8e8;
+      --white:   #f5f5f5;
+      --accent:  #c8a97e;
+      --font-en: 'Cormorant Garamond', serif;
+      --font-jp: 'Noto Serif JP', serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-jp);
+      background: var(--white);
+      color: var(--dark);
+      line-height: 1.8;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CUSTOM CURSOR ───────────────────── */
+    .cursor-dot {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: var(--black);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, background 0.3s, width 0.3s, height 0.3s;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(10,10,10,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease, border-color 0.3s, background 0.3s;
+    }
+    .cursor-dot.hover  { width: 10px; height: 10px; background: var(--accent); }
+    .cursor-ring.hover { width: 60px; height: 60px; border-color: var(--accent); background: rgba(200,169,126,0.06); }
+    .cursor-dot.dark   { background: var(--white); }
+    .cursor-ring.dark  { border-color: rgba(255,255,255,0.4); }
+
+    /* show default cursor on mobile */
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
+    }
+
+    /* ─── NAV ─────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 4rem;
+      background: transparent;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(8px);
+    }
+    .nav-logo {
+      font-family: var(--font-en);
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: var(--white);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-en);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--pale);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--white);
+      transition: all 0.3s;
+    }
+
+    /* ─── HERO ────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: -15%;
+      background-image: url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      filter: grayscale(100%) brightness(0.45);
+      will-change: transform;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
+    }
+    .hero-content {
+      position: relative;
+      text-align: center;
+      color: var(--white);
+      padding: 2rem;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-en);
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s forwards;
+    }
+    .hero-title {
+      font-family: var(--font-en);
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+    }
+    /* split-text chars */
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(60px) rotate(4deg);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .char.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .hero-subtitle {
+      font-family: var(--font-en);
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--light);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.7s forwards;
+    }
+    .hero-tagline {
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.9s forwards;
+    }
+    .hero-btn {
+      display: inline-block;
+      padding: 0.9rem 2.8rem;
+      border: 1px solid var(--white);
+      color: var(--white);
+      text-decoration: none;
+      font-family: var(--font-en);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      transition: background 0.3s, color 0.3s;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.1s forwards;
+    }
+    .hero-btn:hover { background: var(--white); color: var(--black); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.5);
+      font-family: var(--font-en);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: rgba(255,255,255,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.8);
+      animation: scrollAnim 1.5s infinite;
+    }
+
+    /* ─── CONCEPT ─────────────────────────── */
+    .concept {
+      padding: 8rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .section-label {
+      font-family: var(--font-en);
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .section-title {
+      font-family: var(--font-en);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--black);
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+    .concept-text {
+      font-size: 0.9rem;
+      line-height: 2.2;
+      color: var(--mid);
+      max-width: 640px;
+      margin: 0 auto 2rem;
+    }
+    .concept-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      margin: 3rem auto;
+    }
+
+    /* ─── FEATURES ────────────────────────── */
+    .features {
+      background: var(--black);
+      padding: 6rem 2rem;
+    }
+    .features-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .features-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .features-header .section-title { color: var(--white); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .feature-item {
+      padding: 3rem 2.5rem;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .feature-item:last-child { border-right: none; }
+    .feature-item:hover { background: rgba(255,255,255,0.04); }
+    .feature-number {
+      font-family: var(--font-en);
+      font-size: 3rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.1);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+    .feature-title {
+      font-family: var(--font-en);
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .feature-desc {
+      font-size: 0.78rem;
+      line-height: 2;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ─── GALLERY ─────────────────────────── */
+    .gallery {
+      padding: 8rem 2rem;
+    }
+    .gallery-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 280px 280px;
+      gap: 12px;
+    }
+    .gallery-item {
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-item:first-child {
+      grid-row: 1 / 3;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.5s, transform 0.6s;
+    }
+    .gallery-item:hover img {
+      filter: grayscale(20%);
+      transform: scale(1.04);
+    }
+
+    /* ─── MENU ────────────────────────────── */
+    .menu {
+      background: var(--dark);
+      padding: 8rem 2rem;
+    }
+    .menu-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .menu-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .menu-header .section-title { color: var(--white); }
+    .menu-categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+    .menu-category {
+      background: var(--dark);
+      padding: 2.5rem 3rem;
+    }
+    .menu-category-title {
+      font-family: var(--font-en);
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .menu-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .menu-row:last-child { border-bottom: none; }
+    .menu-name {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+    }
+    .menu-price {
+      font-family: var(--font-en);
+      font-size: 0.82rem;
+      color: var(--white);
+      white-space: nowrap;
+    }
+    .menu-note {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.3);
+      margin-top: 1rem;
+      line-height: 1.8;
+    }
+
+    /* ─── ACCESS ──────────────────────────── */
+    .access {
+      padding: 8rem 2rem;
+    }
+    .access-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .access-info .section-label { text-align: left; }
+    .access-info .section-title { text-align: left; font-size: 2.5rem; }
+    .access-table {
+      margin-top: 2rem;
+      width: 100%;
+    }
+    .access-table tr {
+      border-bottom: 1px solid var(--pale);
+    }
+    .access-table td {
+      padding: 0.9rem 0;
+      font-size: 0.82rem;
+      vertical-align: top;
+    }
+    .access-table td:first-child {
+      font-family: var(--font-en);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--light);
+      width: 90px;
+      padding-right: 1rem;
+    }
+    .access-table td:last-child {
+      color: var(--dark);
+      line-height: 1.7;
+    }
+    .access-map {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--pale);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .access-map iframe {
+      width: 100%;
+      height: 420px;
+      display: block;
+      filter: grayscale(25%) contrast(1.05);
+    }
+    .access-map-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: var(--black);
+      color: var(--white);
+      padding: 0.55rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      pointer-events: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .access-map-badge .badge-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--white);
+    }
+    .access-map-badge .badge-addr {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.05em;
+    }
+    .access-map-open {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.2s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .access-map-open:hover { background: #333; }
+
+    /* ─── CTA ─────────────────────────────── */
+    .cta {
+      background: var(--black);
+      padding: 8rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta::before {
+      content: 'RESERVE';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-en);
+      font-size: 15rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.02);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .cta-label {
+      font-family: var(--font-en);
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .cta-title {
+      font-family: var(--font-en);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .cta-sub {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 3rem;
+      letter-spacing: 0.1em;
+    }
+    .cta-phone {
+      font-family: var(--font-en);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+    .cta-phone:hover { color: var(--accent); }
+    .cta-hours {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── FOOTER ──────────────────────────── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 3rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: var(--font-en);
+      font-size: 0.9rem;
+      letter-spacing: 0.3em;
+      color: var(--white);
+    }
+    .footer-copy {
+      font-family: var(--font-en);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* ─── PARALLAX IMAGES ────────────────── */
+    .parallax-wrap {
+      overflow: hidden;
+      position: relative;
+    }
+    .parallax-img {
+      will-change: transform;
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.5s;
+      position: absolute;
+      top: -10%;
+      left: 0;
+    }
+    .parallax-wrap:hover .parallax-img { filter: grayscale(20%); }
+
+    /* ─── MARQUEE ─────────────────────────── */
+    .marquee-wrap {
+      background: var(--black);
+      overflow: hidden;
+      padding: 1.2rem 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 18s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-track span {
+      font-family: var(--font-en);
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 0 3rem;
+    }
+    .marquee-track span.accent { color: var(--accent); }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── ANIMATIONS ──────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scrollAnim {
+      0%   { top: -100%; }
+      100% { top: 100%; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ─── MOBILE ──────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+      .feature-item:last-child { border-bottom: none; }
+
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(3, 200px);
+      }
+      .gallery-item:first-child { grid-row: auto; }
+
+      .menu-categories { grid-template-columns: 1fr; }
+
+      .access-inner { grid-template-columns: 1fr; gap: 3rem; }
+
+      footer { flex-direction: column; text-align: center; padding: 2rem; }
+    }
+
+    @media (max-width: 600px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(5, 220px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CUSTOM CURSOR -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Machua</a>
+    <ul class="nav-links">
+      <li><a href="#concept">Concept</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#access">Access</a></li>
+      <li><a href="#contact">Reserve</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="メニュー" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Fujisawa — Since 2005</p>
+      <h1 class="hero-title">MACHUA<br>DESIGNERS<br>SALON</h1>
+      <p class="hero-subtitle">マチュア デザイナーズ サロン</p>
+      <p class="hero-tagline">あなたらしさを、デザインする。</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="booking.html" class="hero-btn" style="background:var(--accent);border-color:var(--accent);color:#fff;opacity:1;animation:fadeUp 0.8s 1.1s forwards;">ご予約はこちら</a>
+        <a href="#menu" class="hero-btn">View Menu</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Hair Design</span><span class="accent">—</span>
+      <span>Color</span><span class="accent">—</span>
+      <span>Treatment</span><span class="accent">—</span>
+      <span>Perm</span><span class="accent">—</span>
+      <span>Styling</span><span class="accent">—</span>
+      <span>Fujisawa</span><span class="accent">—</span>
+      <span>Hair Design</span><span class="accent">—</span>
+      <span>Color</span><span class="accent">—</span>
+      <span>Treatment</span><span class="accent">—</span>
+      <span>Perm</span><span class="accent">—</span>
+      <span>Styling</span><span class="accent">—</span>
+      <span>Fujisawa</span><span class="accent">—</span>
+    </div>
+  </div>
+
+  <!-- CONCEPT -->
+  <section class="concept" id="concept">
+    <span class="section-label reveal">Our Philosophy</span>
+    <h2 class="section-title reveal">Hair is<br><em>Your Identity</em></h2>
+    <div class="concept-divider reveal"></div>
+    <p class="concept-text reveal">
+      MACHUA DESIGNERS SALONは、神奈川・藤沢の鵠沼石上にある、少人数制のプライベートヘアサロンです。<br><br>
+      ハイキャリアのスタイリストが、お客様一人ひとりの個性と生活スタイルに合わせた、最もベストなヘアデザインをご提案します。カラーとトリートメントに特別なこだわりを持ち、上質な仕上がりと心地よいサロン体験をお届けしています。
+    </p>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="features-inner">
+      <div class="features-header">
+        <span class="section-label reveal">What We Offer</span>
+        <h2 class="section-title reveal">Our Strength</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-item reveal">
+          <div class="feature-number">01</div>
+          <div class="feature-title">Color Expert</div>
+          <p class="feature-desc">経験豊富なカラーリストによる、プラチナカラーをはじめとする繊細な発色のカラーリングを提供。あなたの肌色・骨格に合わせたカラーを提案します。</p>
+        </div>
+        <div class="feature-item reveal">
+          <div class="feature-number">02</div>
+          <div class="feature-title">Hair Treatment</div>
+          <p class="feature-desc">髪の状態を丁寧に診断し、最適なトリートメントをご提案。繰り返すカラーやパーマによるダメージをケアし、潤いのある美しい髪へ導きます。</p>
+        </div>
+        <div class="feature-item reveal">
+          <div class="feature-number">03</div>
+          <div class="feature-title">Private Salon</div>
+          <p class="feature-desc">少人数スタッフによるアットホームな空間。お客様のペースに合わせた丁寧なカウンセリングで、初めての方もリラックスしてお過ごしいただけます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery" id="gallery">
+    <div class="gallery-inner">
+      <div class="gallery-header">
+        <span class="section-label reveal">Work & Space</span>
+        <h2 class="section-title reveal">Gallery</h2>
+      </div>
+      <div class="gallery-grid reveal">
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80" alt="ヘアサロン施術" loading="lazy" />
+        </div>
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&q=80" alt="ヘアカラー" loading="lazy" />
+        </div>
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80" alt="ヘアスタイリング" loading="lazy" />
+        </div>
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80" alt="サロン空間" loading="lazy" />
+        </div>
+        <div class="gallery-item parallax-wrap">
+          <img class="parallax-img" src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?w=600&q=80" alt="トリートメント" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section class="menu" id="menu">
+    <div class="menu-inner">
+      <div class="menu-header">
+        <span class="section-label reveal">Price List</span>
+        <h2 class="section-title reveal">Menu</h2>
+      </div>
+      <div class="menu-categories">
+        <div class="menu-category reveal">
+          <div class="menu-category-title">Cut</div>
+          <div class="menu-row">
+            <span class="menu-name">カット（大人）</span>
+            <span class="menu-price">¥4,320</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">カット（中学生）</span>
+            <span class="menu-price">¥3,780</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">カット（小学生以下）</span>
+            <span class="menu-price">¥2,700</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">眉カット</span>
+            <span class="menu-price">¥540〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">ヒゲカット</span>
+            <span class="menu-price">¥540〜</span>
+          </div>
+          <p class="menu-note">※料金は税込価格です。<br>ヘアセットは別途お問い合わせください。</p>
+        </div>
+        <div class="menu-category reveal">
+          <div class="menu-category-title">Color</div>
+          <div class="menu-row">
+            <span class="menu-name">ワンカラー</span>
+            <span class="menu-price">¥7,020〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">プラチナカラー</span>
+            <span class="menu-price">¥8,640〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">ハイライト</span>
+            <span class="menu-price">¥9,720〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">グレイカラー（白髪染め）</span>
+            <span class="menu-price">¥7,020〜</span>
+          </div>
+          <p class="menu-note">※髪の長さ・状態によって料金が異なります。<br>詳細はカウンセリング時にご案内いたします。</p>
+        </div>
+        <div class="menu-category reveal">
+          <div class="menu-category-title">Perm & Treatment</div>
+          <div class="menu-row">
+            <span class="menu-name">パーマ</span>
+            <span class="menu-price">¥9,180〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">縮毛矯正</span>
+            <span class="menu-price">¥16,200〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">ヘアトリートメント</span>
+            <span class="menu-price">¥3,240〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">スパ（頭皮ケア）</span>
+            <span class="menu-price">¥2,160〜</span>
+          </div>
+          <p class="menu-note">※詳細価格はお問い合わせください。</p>
+        </div>
+        <div class="menu-category reveal">
+          <div class="menu-category-title">Set Menu</div>
+          <div class="menu-row">
+            <span class="menu-name">カット＋カラー</span>
+            <span class="menu-price">¥10,800〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">カット＋パーマ</span>
+            <span class="menu-price">¥12,960〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">カット＋トリートメント</span>
+            <span class="menu-price">¥7,020〜</span>
+          </div>
+          <div class="menu-row">
+            <span class="menu-name">カット＋カラー＋トリートメント</span>
+            <span class="menu-price">¥13,500〜</span>
+          </div>
+          <p class="menu-note">※セットメニューは組み合わせ割引が適用されます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCESS -->
+  <section class="access" id="access">
+    <div class="access-inner">
+      <div class="access-info">
+        <span class="section-label">Location</span>
+        <h2 class="section-title">Access</h2>
+        <table class="access-table reveal">
+          <tr>
+            <td>Address</td>
+            <td>神奈川県藤沢市鵠沼石上一丁目4番10号<br>MIビル B1F</td>
+          </tr>
+          <tr>
+            <td>Tel</td>
+            <td><a href="tel:0466531202" style="color: var(--dark); text-decoration: none;">0466-53-1202</a></td>
+          </tr>
+          <tr>
+            <td>Hours</td>
+            <td>10:00 – 19:00（最終受付 19:00）<br><span style="font-size:0.75rem;color:var(--light)">パーマ・カラーも19:00まで受付</span></td>
+          </tr>
+          <tr>
+            <td>Closed</td>
+            <td>不定休（要確認）</td>
+          </tr>
+          <tr>
+            <td>Access</td>
+            <td>小田急線・JR東海道線<br><strong>藤沢駅</strong> 南口より徒歩 約4分</td>
+          </tr>
+          <tr>
+            <td>Parking</td>
+            <td>近隣にコインパーキングあり</td>
+          </tr>
+        </table>
+      </div>
+      <div class="access-map reveal">
+        <iframe
+          src="https://maps.google.com/maps?q=35.335886,139.487997&output=embed&hl=ja&z=15&markers=color:red%7C35.335886,139.487997"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="MACHUA DESIGNERS SALON 地図"
+        ></iframe>
+        <div class="access-map-badge">
+          <span class="badge-name">MACHUA DESIGNERS SALON</span>
+          <span class="badge-addr">鵠沼石上1-4-10 MIビルB1F</span>
+        </div>
+        <a
+          class="access-map-open"
+          href="https://maps.google.com/maps?q=35.335886,139.487997"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Google Maps で開く ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="contact">
+    <p class="cta-label reveal">Reservation</p>
+    <h2 class="cta-title reveal">ご予約・お問い合わせ</h2>
+    <p class="cta-sub reveal">お電話にてお気軽にご連絡ください</p>
+    <a href="tel:0466531202" class="cta-phone reveal">0466-53-1202</a>
+    <p class="cta-hours reveal">受付時間：10:00 – 19:00　／　不定休</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">MACHUA DESIGNERS SALON</div>
+    <div class="footer-copy">© 2024 Machua Designers Salon. All rights reserved.</div>
+  </footer>
+
+  <script>
+    /* ═══════════════════════════════════════
+       1. CUSTOM CURSOR
+    ═══════════════════════════════════════ */
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let ringX = 0, ringY = 0, mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.left = mouseX + 'px';
+      dot.style.top  = mouseY + 'px';
+    });
+
+    // Ring lags behind dot
+    (function animateRing() {
+      ringX += (mouseX - ringX) * 0.12;
+      ringY += (mouseY - ringY) * 0.12;
+      ring.style.left = ringX + 'px';
+      ring.style.top  = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    // Hover effect on interactive elements
+    document.querySelectorAll('a, button, .gallery-item, .feature-item').forEach(el => {
+      el.addEventListener('mouseenter', () => { dot.classList.add('hover'); ring.classList.add('hover'); });
+      el.addEventListener('mouseleave', () => { dot.classList.remove('hover'); ring.classList.remove('hover'); });
+    });
+
+    // Dark cursor on dark sections
+    const darkSections = document.querySelectorAll('.features, .menu, .cta, footer, .marquee-wrap');
+    const cursorObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          dot.classList.add('dark'); ring.classList.add('dark');
+        } else {
+          // check if any dark section is still visible
+          const anyDark = [...darkSections].some(s => {
+            const r = s.getBoundingClientRect();
+            return r.top < window.innerHeight / 2 && r.bottom > window.innerHeight / 2;
+          });
+          if (!anyDark) { dot.classList.remove('dark'); ring.classList.remove('dark'); }
+        }
+      });
+    }, { threshold: 0.3 });
+    darkSections.forEach(s => cursorObserver.observe(s));
+
+    /* ═══════════════════════════════════════
+       2. NAV SCROLL
+    ═══════════════════════════════════════ */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ═══════════════════════════════════════
+       3. SPLIT TEXT — Hero title
+    ═══════════════════════════════════════ */
+    function splitText(el) {
+      const lines = el.innerHTML.split('<br>');
+      el.innerHTML = lines.map(line =>
+        [...line].map(ch =>
+          ch === ' ' ? '<span class="char" style="width:0.3em"> </span>'
+                     : `<span class="char">${ch}</span>`
+        ).join('')
+      ).join('<br>');
+    }
+
+    const heroTitle = document.querySelector('.hero-title');
+    splitText(heroTitle);
+
+    // Trigger chars after a short delay
+    setTimeout(() => {
+      document.querySelectorAll('.hero-title .char').forEach((c, i) => {
+        setTimeout(() => c.classList.add('visible'), i * 40 + 200);
+      });
+    }, 300);
+
+    /* ═══════════════════════════════════════
+       4. PARALLAX
+    ═══════════════════════════════════════ */
+    const heroBg = document.getElementById('heroBg');
+    const parallaxImgs = document.querySelectorAll('.parallax-img');
+
+    function onScroll() {
+      const sy = window.scrollY;
+
+      // Hero bg parallax
+      heroBg.style.transform = `translateY(${sy * 0.35}px)`;
+
+      // Gallery images parallax
+      parallaxImgs.forEach(img => {
+        const wrap = img.parentElement;
+        const rect = wrap.getBoundingClientRect();
+        const center = rect.top + rect.height / 2 - window.innerHeight / 2;
+        img.style.transform = `translateY(${center * 0.12}px)`;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ═══════════════════════════════════════
+       5. SCROLL REVEAL (staggered)
+    ═══════════════════════════════════════ */
+    document.querySelectorAll('.features-grid, .menu-categories').forEach(container => {
+      [...container.querySelectorAll('.reveal')].forEach((el, i) => {
+        el.style.transitionDelay = (i * 0.12) + 's';
+      });
+    });
+
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ═══════════════════════════════════════
+       6. SMOOTH SCROLL for nav links
+    ═══════════════════════════════════════ */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    /* ═══════════════════════════════════════
+       7. HAMBURGER (mobile)
+    ═══════════════════════════════════════ */
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      const isOpen = navLinks.style.display === 'flex';
+      navLinks.style.cssText = isOpen
+        ? ''
+        : 'display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.97);justify-content:center;align-items:center;gap:2rem;font-size:1.2rem;z-index:99;';
+    });
+  </script>
+</body>
+</html>

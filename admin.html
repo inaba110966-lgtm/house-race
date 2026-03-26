@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>管理画面 | MACHUA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--black:#0a0a0a;--dark:#1a1a1a;--mid:#555;--light:#aaa;--pale:#e8e8e8;--white:#f5f5f5;--accent:#c8a97e;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Noto Serif JP',serif;background:#f0f0f0;color:var(--dark);}
+    a{text-decoration:none;color:inherit;}
+
+    /* ── Admin layout ── */
+    .admin-wrap{display:flex;min-height:100vh;}
+    .sidebar{width:200px;background:var(--black);flex-shrink:0;display:flex;flex-direction:column;}
+    .sb-logo{padding:1.4rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:0.9rem;letter-spacing:0.3em;color:var(--white);border-bottom:1px solid rgba(255,255,255,0.07);}
+    .sb-logo small{display:block;font-size:0.55rem;letter-spacing:0.2em;color:rgba(255,255,255,0.3);margin-top:0.2rem;text-transform:uppercase;}
+    .sb-nav{flex:1;padding:0.8rem 0;}
+    .sb-link{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.5rem;font-size:0.76rem;letter-spacing:0.08em;color:rgba(255,255,255,0.5);transition:all 0.2s;}
+    .sb-link:hover{color:var(--white);background:rgba(255,255,255,0.05);}
+    .sb-link.active{color:var(--white);background:rgba(255,255,255,0.08);border-left:2px solid var(--accent);}
+    .sb-link .icon{font-size:0.9rem;}
+    .sb-bottom{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,0.07);}
+    .sb-logout{background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);font-size:0.7rem;letter-spacing:0.1em;padding:0.4rem 0.8rem;cursor:pointer;width:100%;transition:all 0.2s;}
+    .sb-logout:hover{color:var(--white);border-color:rgba(255,255,255,0.4);}
+
+    .main{flex:1;overflow:auto;}
+    .main-header{background:var(--white);border-bottom:1px solid var(--pale);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;}
+    .main-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;letter-spacing:0.12em;}
+    .main-body{padding:1.5rem 2rem 4rem;}
+
+    /* ── Controls ── */
+    .ctrl{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;gap:1rem;flex-wrap:wrap;}
+    .ctrl-nav{display:flex;align-items:center;gap:0.7rem;}
+    .btn-arr{background:var(--white);border:1px solid var(--pale);color:var(--dark);padding:0.3rem 0.9rem;cursor:pointer;font-size:0.78rem;transition:border-color 0.2s;}
+    .btn-arr:hover{border-color:var(--mid);}
+    .ctrl-lbl{font-family:'Cormorant Garamond',serif;font-size:1rem;min-width:180px;text-align:center;}
+    .vtoggle{display:flex;border:1px solid var(--pale);overflow:hidden;}
+    .vbtn{background:var(--white);border:none;padding:0.3rem 1rem;cursor:pointer;font-size:0.73rem;color:var(--mid);transition:all 0.2s;}
+    .vbtn.on{background:var(--dark);color:var(--white);}
+    .btn-today{background:var(--white);border:1px solid var(--accent);color:var(--accent);padding:0.3rem 0.8rem;cursor:pointer;font-size:0.73rem;}
+
+    /* ── Daily grid ── */
+    .daily{background:var(--white);}
+    .slot{display:flex;align-items:stretch;border-bottom:1px solid var(--pale);min-height:50px;}
+    .slot-t{width:62px;font-family:'Cormorant Garamond',serif;font-size:0.85rem;color:var(--light);display:flex;align-items:center;padding:0 0.5rem 0 0.8rem;flex-shrink:0;border-right:1px solid var(--pale);}
+    .slot-body{flex:1;padding:0.4rem 0.8rem;display:flex;align-items:center;flex-wrap:wrap;gap:0.4rem;}
+    .bk-chip{background:var(--dark);color:var(--white);padding:0.3rem 0.7rem;font-size:0.72rem;cursor:pointer;border:none;display:flex;align-items:center;gap:0.4rem;transition:background 0.15s;}
+    .bk-chip:hover{background:#333;}
+    .bk-chip .bk-name{font-weight:bold;}
+    .bk-chip .bk-course{color:var(--accent);font-size:0.65rem;}
+    .slot-cl{font-size:0.72rem;color:#c0392b;padding:0 0.5rem;}
+    .slot-empty{font-size:0.72rem;color:var(--pale);}
+
+    /* ── Weekly grid ── */
+    .wkwrap{overflow-x:auto;}
+    .wkgrid{display:grid;min-width:700px;background:var(--white);}
+    .wk-th{font-size:0.68rem;text-align:center;padding:0.6rem 0.3rem;border-bottom:2px solid var(--dark);background:var(--white);position:sticky;top:0;z-index:2;line-height:1.5;}
+    .wk-th.tod{background:rgba(200,169,126,0.13);}
+    .wk-time{font-family:'Cormorant Garamond',serif;font-size:0.72rem;color:var(--light);padding:0 0.5rem;border-right:1px solid var(--pale);border-bottom:1px solid var(--pale);display:flex;align-items:center;min-height:40px;}
+    .wk-cell{border-right:1px solid var(--pale);border-bottom:1px solid var(--pale);min-height:40px;padding:2px;display:flex;flex-direction:column;gap:2px;}
+    .wk-cell.tod{background:rgba(200,169,126,0.04);}
+    .wk-cell.cl{background:rgba(192,57,43,0.04);}
+    .wk-chip{background:var(--dark);color:var(--white);padding:0.2rem 0.4rem;font-size:0.62rem;cursor:pointer;line-height:1.3;border:none;width:100%;text-align:left;transition:background 0.15s;}
+    .wk-chip:hover{background:#333;}
+    .wk-cl{font-size:0.6rem;color:#c0392b;text-align:center;padding:0.3rem 0;}
+
+    /* ── Booking detail modal ── */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem;}
+    .modal{background:var(--white);max-width:420px;width:100%;padding:2rem;}
+    .modal-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;letter-spacing:0.1em;margin-bottom:1.2rem;border-bottom:1px solid var(--pale);padding-bottom:0.8rem;}
+    .detail-tbl{width:100%;font-size:0.8rem;margin-bottom:1.5rem;}
+    .detail-tbl td{padding:0.5rem 0;border-bottom:1px solid var(--pale);vertical-align:top;}
+    .detail-tbl td:first-child{color:var(--light);font-family:'Cormorant Garamond',serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;width:90px;}
+    .modal-actions{display:flex;gap:0.7rem;}
+    .btn-del{flex:1;padding:0.7rem;background:#c0392b;color:var(--white);border:none;font-size:0.78rem;cursor:pointer;letter-spacing:0.1em;}
+    .btn-del:hover{background:#a93226;}
+    .btn-close{flex:1;padding:0.7rem;background:none;border:1px solid var(--pale);color:var(--mid);font-size:0.78rem;cursor:pointer;}
+
+    /* ── Password modal ── */
+    .pw-bg{position:fixed;inset:0;background:rgba(10,10,10,0.92);z-index:400;display:flex;align-items:center;justify-content:center;}
+    .pw-box{background:var(--white);max-width:380px;width:100%;padding:2.5rem;}
+    .pw-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;letter-spacing:0.1em;text-align:center;margin-bottom:0.4rem;}
+    .pw-sub{font-size:0.74rem;color:var(--light);text-align:center;margin-bottom:1.8rem;}
+    .pw-input{width:100%;padding:0.75rem 1rem;border:1px solid var(--pale);font-size:0.9rem;outline:none;margin-bottom:0.8rem;}
+    .pw-input:focus{border-color:var(--accent);}
+    .pw-btn{width:100%;padding:0.8rem;background:var(--black);color:var(--white);border:none;font-size:0.8rem;letter-spacing:0.2em;cursor:pointer;}
+    .pw-err{color:#c0392b;font-size:0.74rem;text-align:center;margin-bottom:0.6rem;display:none;}
+
+    .hidden{display:none!important;}
+
+    @media(max-width:700px){
+      .sidebar{width:56px;}
+      .sb-logo,.sb-link span,.sb-bottom,.sb-logo small{display:none;}
+      .sb-link{justify-content:center;padding:0.8rem;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Password gate -->
+<div class="pw-bg" id="pwGate">
+  <div class="pw-box">
+    <div class="pw-title">MACHUA 管理画面</div>
+    <div class="pw-sub">パスワードを入力してください</div>
+    <p class="pw-err" id="pwErr">パスワードが違います</p>
+    <input type="password" class="pw-input" id="pwInput" placeholder="Password" autocomplete="current-password"/>
+    <button class="pw-btn" id="pwBtn">ログイン</button>
+  </div>
+</div>
+
+<div class="admin-wrap hidden" id="adminApp">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-logo">MACHUA<small>Admin</small></div>
+    <nav class="sb-nav">
+      <a href="admin.html" class="sb-link active"><span class="icon">📅</span><span>予約カレンダー</span></a>
+      <a href="admin-courses.html" class="sb-link"><span class="icon">✂️</span><span>コースマスタ</span></a>
+      <a href="admin-schedule.html" class="sb-link"><span class="icon">⚙️</span><span>稼働マスタ</span></a>
+    </nav>
+    <div class="sb-bottom">
+      <button class="sb-logout" onclick="MACHUA.auth.logout()">ログアウト</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="main-header">
+      <span class="main-title">予約カレンダー</span>
+      <a href="booking.html" style="font-size:0.72rem;color:var(--accent);letter-spacing:0.1em;">← 予約ページへ</a>
+    </div>
+    <div class="main-body">
+      <div class="ctrl">
+        <div class="ctrl-nav">
+          <button class="btn-arr" id="prevBtn">&#8249; 前へ</button>
+          <span class="ctrl-lbl" id="ctrlLbl"></span>
+          <button class="btn-arr" id="nextBtn">次へ &#8250;</button>
+        </div>
+        <div style="display:flex;gap:0.7rem;align-items:center;">
+          <button class="btn-today" id="todayBtn">今日</button>
+          <div class="vtoggle">
+            <button class="vbtn on" id="vDaily">日次</button>
+            <button class="vbtn" id="vWeekly">週次</button>
+          </div>
+        </div>
+      </div>
+      <div id="grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking detail modal -->
+<div class="modal-bg hidden" id="detailModal">
+  <div class="modal">
+    <div class="modal-title">予約詳細</div>
+    <table class="detail-tbl" id="detailTable"></table>
+    <div class="modal-actions">
+      <button class="btn-del" id="delBtn">この予約を削除</button>
+      <button class="btn-close" onclick="closeModal()">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script src="booking-data.js"></script>
+<script>
+  /* ── Auth ──────────────────────────────────────────── */
+  function checkAuth(){
+    if(MACHUA.auth.check()){ document.getElementById('pwGate').classList.add('hidden'); document.getElementById('adminApp').classList.remove('hidden'); render(); }
+  }
+  document.getElementById('pwBtn').onclick=()=>{
+    const pw=document.getElementById('pwInput').value;
+    if(MACHUA.auth.login(pw)){ checkAuth(); }
+    else { document.getElementById('pwErr').style.display='block'; }
+  };
+  document.getElementById('pwInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('pwBtn').click(); });
+  checkAuth();
+
+  /* ── Calendar state ─────────────────────────────────── */
+  let cur  = MACHUA.today();
+  let view = 'daily';
+  let activeBookingId = null;
+
+  const $lbl  = document.getElementById('ctrlLbl');
+  const $grid = document.getElementById('grid');
+  const $vD   = document.getElementById('vDaily');
+  const $vW   = document.getElementById('vWeekly');
+
+  $vD.onclick = ()=>{ view='daily';  $vD.classList.add('on'); $vW.classList.remove('on'); render(); };
+  $vW.onclick = ()=>{ view='weekly'; $vW.classList.add('on'); $vD.classList.remove('on'); render(); };
+  document.getElementById('prevBtn').onclick=()=>{ const d=MACHUA.fromStr(cur);d.setDate(d.getDate()-(view==='weekly'?7:1));cur=MACHUA.toStr(d);render(); };
+  document.getElementById('nextBtn').onclick=()=>{ const d=MACHUA.fromStr(cur);d.setDate(d.getDate()+(view==='weekly'?7:1));cur=MACHUA.toStr(d);render(); };
+  document.getElementById('todayBtn').onclick=()=>{ cur=MACHUA.today(); render(); };
+
+  /* ── Modal ────────────────────────────────────────────── */
+  function showBooking(id){
+    const b=MACHUA.bookings.find(id); if(!b) return;
+    activeBookingId=id;
+    const c=MACHUA.courses.find(b.courseId);
+    const optNames=(b.optionIds||[]).map(id=>{ const o=c?.options.find(o=>o.id===id); return o?o.name:id; }).join('、')||'なし';
+    const h=~~(b.totalMinutes/60),m=b.totalMinutes%60;
+    document.getElementById('detailTable').innerHTML=`
+      <tr><td>日時</td><td>${MACHUA.fmt(b.date)} ${b.startTime}</td></tr>
+      <tr><td>お名前</td><td>${b.name}</td></tr>
+      <tr><td>コース</td><td>${c?.name??b.courseId}</td></tr>
+      <tr><td>オプション</td><td>${optNames}</td></tr>
+      <tr><td>合計</td><td>¥${Number(b.totalPrice).toLocaleString()} / ${h?h+'時間':''}${m?m+'分':''}</td></tr>
+      <tr><td>電話</td><td>${b.phone}</td></tr>
+      <tr><td>メール</td><td>${b.email}</td></tr>
+    `;
+    document.getElementById('detailModal').classList.remove('hidden');
+  }
+  function closeModal(){ document.getElementById('detailModal').classList.add('hidden'); activeBookingId=null; }
+  document.getElementById('delBtn').onclick=()=>{
+    if(activeBookingId&&confirm('この予約を削除しますか？')){ MACHUA.bookings.remove(activeBookingId); closeModal(); render(); }
+  };
+  document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target===document.getElementById('detailModal')) closeModal(); });
+
+  /* ── Render daily ────────────────────────────────────── */
+  function renderDaily(){
+    const d=MACHUA.fromStr(cur);
+    $lbl.textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${MACHUA.DAY[d.getDay()]}）`;
+    const slots=MACHUA.getDateSlots(cur);
+    let h=`<div class="daily">`;
+    slots.forEach(s=>{
+      h+=`<div class="slot"><div class="slot-t">${s.time}</div><div class="slot-body">`;
+      if(s.closed) h+=`<span class="slot-cl">定休日</span>`;
+      else if(s.bookings.length){
+        s.bookings.forEach(b=>{ const c=MACHUA.courses.find(b.courseId); h+=`<button class="bk-chip" onclick="showBooking('${b.id}')"><span class="bk-name">${b.name}</span><span class="bk-course">${c?.name??''}</span></button>`; });
+      } else h+=`<span class="slot-empty">—</span>`;
+      h+=`</div></div>`;
+    });
+    h+=`</div>`;
+    return h;
+  }
+
+  /* ── Render weekly ───────────────────────────────────── */
+  function renderWeekly(){
+    const days=MACHUA.weekOf(cur), slots=MACHUA.getAllSlots(), tod=MACHUA.today();
+    const fd=MACHUA.fromStr(days[0]),ld=MACHUA.fromStr(days[6]);
+    $lbl.textContent=`${fd.getMonth()+1}/${fd.getDate()} 〜 ${ld.getMonth()+1}/${ld.getDate()}`;
+    const ds=days.map(d=>MACHUA.getDateSlots(d));
+    let h=`<div class="wkwrap"><div class="wkgrid" style="grid-template-columns:56px repeat(7,1fr);">`;
+    h+=`<div class="wk-th"></div>`;
+    days.forEach((d,i)=>{
+      const fd2=MACHUA.fromStr(d),isT=d===tod;
+      const color=['#c0392b','#333','#333','#333','#333','#333','#1a5276'][i];
+      h+=`<div class="wk-th${isT?' tod':''}"><span style="color:${color};font-size:0.72rem">${fd2.getMonth()+1}/${fd2.getDate()}</span><br>${MACHUA.DAY[i]}</div>`;
+    });
+    slots.forEach(time=>{
+      h+=`<div class="wk-time">${time}</div>`;
+      days.forEach((d,di)=>{
+        const sl=ds[di].find(x=>x.time===time), isT=d===tod;
+        h+=`<div class="wk-cell${isT?' tod':''}${sl.closed?' cl':''}">`;
+        if(sl.closed) h+=`<div class="wk-cl">休</div>`;
+        else sl.bookings.forEach(b=>{ const c=MACHUA.courses.find(b.courseId); h+=`<button class="wk-chip" onclick="showBooking('${b.id}')">${b.name}<br><span style="color:var(--accent);font-size:0.58rem">${c?.name??''}</span></button>`; });
+        h+=`</div>`;
+      });
+    });
+    h+=`</div></div>`;
+    return h;
+  }
+
+  function render(){ if(MACHUA.auth.check()) $grid.innerHTML=view==='daily'?renderDaily():renderWeekly(); }
+</script>
+</body>
+</html>
