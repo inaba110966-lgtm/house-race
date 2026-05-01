@@ -1,11 +1,11 @@
 """
 Embedding サービス
 
-Anthropic の voyage-3 モデルでテキストをベクトル化する。
-バッチ処理とキャッシュに対応。
+Voyage AI (voyage-3) でテキストをベクトル化する。
+voyageai ライブラリを使用。
 """
 
-import anthropic
+import voyageai
 import asyncio
 import logging
 from functools import lru_cache
@@ -14,35 +14,27 @@ from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-BATCH_SIZE = 96  # voyage-3 の推奨バッチサイズ
+BATCH_SIZE = 128  # voyage-3 の最大バッチサイズ
 
 
 class EmbeddingService:
     def __init__(self):
         settings = get_settings()
-        self._client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+        self._client = voyageai.Client(api_key=settings.voyage_api_key)
         self._model = settings.embedding_model
 
     def embed_text(self, text: str) -> list[float]:
         """単一テキストをベクトル化"""
-        response = self._client.beta.messages.batches  # Voyage経由
-        # Anthropic SDK の voyage embedding
-        result = self._client.embeddings.create(
-            model=self._model,
-            input=[text],
-        )
-        return result.embeddings[0].embedding
+        result = self._client.embed([text], model=self._model)
+        return result.embeddings[0]
 
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
         """複数テキストをバッチでベクトル化"""
         all_embeddings: list[list[float]] = []
         for i in range(0, len(texts), BATCH_SIZE):
             batch = texts[i: i + BATCH_SIZE]
-            result = self._client.embeddings.create(
-                model=self._model,
-                input=batch,
-            )
-            all_embeddings.extend(e.embedding for e in result.embeddings)
+            result = self._client.embed(batch, model=self._model)
+            all_embeddings.extend(result.embeddings)
         return all_embeddings
 
     async def embed_text_async(self, text: str) -> list[float]:

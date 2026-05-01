@@ -3,10 +3,13 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    # Anthropic
+    # Anthropic (LLM)
     anthropic_api_key: str
     claude_model: str = "claude-sonnet-4-6"
-    embedding_model: str = "voyage-3"  # via Anthropic Voyager or text embedding
+
+    # Voyage AI (Embedding)
+    voyage_api_key: str
+    embedding_model: str = "voyage-3"
 
     # Qdrant
     qdrant_host: str = "localhost"
