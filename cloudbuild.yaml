@@ -1,0 +1,43 @@
+steps:
+  # Dockerイメージをビルド
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - '-t'
+      - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/keiba-analysis/app:$COMMIT_SHA'
+      - '-t'
+      - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/keiba-analysis/app:latest'
+      - '.'
+
+  # Artifact Registryにプッシュ
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - '--all-tags'
+      - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/keiba-analysis/app'
+
+  # Cloud Runにデプロイ
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - keiba-analysis
+      - '--image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/keiba-analysis/app:$COMMIT_SHA'
+      - '--region=asia-northeast1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=2Gi'
+      - '--cpu=2'
+      - '--min-instances=0'
+      - '--max-instances=10'
+      - '--set-secrets=ANTHROPIC_API_KEY=anthropic-api-key:latest'
+      - '--set-env-vars=QDRANT_URL=$$QDRANT_URL'
+
+images:
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/keiba-analysis/app:$COMMIT_SHA'
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/keiba-analysis/app:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8

@@ -1,5 +1,38 @@
+# Salesforce
 .sfdx/
 .sf/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.env
+
+# Node
 node_modules/
+dist/
+.vite/
 *.tgz
+
+# Data (JRA-VANデータは含めない)
+data/jra_van/
+*.ra
+*.RA
+*.se
+*.SE
+*.hn
+*.HN
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Docker
+*.log
